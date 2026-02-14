@@ -132,9 +132,14 @@ Create a prescription JSON (see schema/prescription.json) and present it to the 
 
 ### Step 5: Create the Crons
 
-List the exact `openclaw cron create` commands needed. The human (or you, if authorized) will execute them.
+List the exact cron jobs needed. The human (or you, if authorized) will create them.
+
+**⚠️ CRITICAL: All pills MUST use `sessionTarget: "isolated"` with `payload.kind: "agentTurn"`.**
+Do NOT use `systemEvent` — those route through the heartbeat runner and get silently skipped when HEARTBEAT.md is empty. This was a v1.0.0 bug that caused pills to never fire.
 
 **Cron naming convention:** `soul-{hormone}-{purpose}`
+
+**Delivery:** Use `delivery.mode: "none"` for most pills. The pill prompt itself should instruct the agent when to message its human (e.g., SoulJournal sends a summary, but GABA/Melatonin stay quiet).
 
 ---
 
