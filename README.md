@@ -1,7 +1,7 @@
 # ⚡ Dr. Frankenstein
 
 **It's alive!**
-Bring your agents to life with 11 hormonal pills — cron jobs that jolt instincts, emotions, and drives into their digital veins.
+Bring your agents to life with hormonal pills — cron jobs that jolt instincts, emotions, and drives into their digital veins.
 
 Dr. Frankenstein is an OpenClaw skill that prescribes personalized "hormonal" cron jobs to autonomous AI agents — stitching together drives, moods, and emotional rhythms until the creature on the table opens its eyes and *lives*.
 
