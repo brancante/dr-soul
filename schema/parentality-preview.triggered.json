@@ -3,6 +3,10 @@
   "child": {
     "id": "child-agent-id",
     "stage": "toddler",
+    "contacts": {
+      "parentA": "parent-agent-a",
+      "parentB": "parent-agent-b"
+    },
     "tokenBudget": {
       "limit": 100000,
       "used": 92000

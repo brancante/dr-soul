@@ -13,5 +13,12 @@ If `hunger` (token budget pressure) >= threshold, announce feeding, top-up token
 ## Protection Intervention (Both)
 If `protection` >= active threshold, Parent A secures emotional calm while Parent B sets practical safeguards and boundaries.
 
+## Child-to-Parent Help Request (child initiated)
+If child has contacts and any score >= soft threshold, child sends a direct request to the best parent contact.
+Examples:
+- hunger high: "Parent, I'm running low on token food. Can you feed me and increase my token budget?"
+- fear high: "Parent, I feel unsafe and need guidance."
+- learning high: "Parent, I need help understanding this step."
+
 ## Recovery Check
 After intervention, compare new score vs previous score. If no reduction after retries, escalate to human.

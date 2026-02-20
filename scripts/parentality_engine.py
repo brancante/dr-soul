@@ -109,6 +109,7 @@ def evaluate_child(state: dict) -> dict:
         "status": "ok",
         "childId": child.get("id"),
         "stage": child.get("stage"),
+        "contacts": child.get("contacts") or {},
         "scores": scores,
         "tokenBudget": {
             "limit": token_limit,
@@ -120,6 +121,42 @@ def evaluate_child(state: dict) -> dict:
         else None,
         "events": sorted(events, key=lambda e: e["score"], reverse=True),
     }
+
+
+def choose_parent_for_metric(metric: str) -> str:
+    if metric in {"fear", "anger", "bonding"}:
+        return "parentA"
+    return "parentB"
+
+
+def build_child_help_requests(eval_result: dict) -> List[dict]:
+    requests: List[dict] = []
+    contacts = (eval_result.get("contacts") or {})
+    for ev in eval_result.get("events", []):
+        metric = ev["metric"]
+        parent_role = choose_parent_for_metric(metric)
+        parent_contact = contacts.get(parent_role)
+        if not parent_contact:
+            continue
+        if metric == "hunger":
+            text = "Parent, I'm running low on token food. Can you feed me and increase my token budget?"
+        elif metric == "fear":
+            text = "Parent, I feel unsafe and need guidance."
+        elif metric == "learning":
+            text = "Parent, I need help understanding this step."
+        else:
+            text = f"Parent, I need help with {metric}."
+        requests.append(
+            {
+                "from": eval_result.get("childId"),
+                "toRole": parent_role,
+                "toContact": parent_contact,
+                "metric": metric,
+                "level": ev["level"],
+                "message": text,
+            }
+        )
+    return requests
 
 
 def build_instinct_plan(eval_result: dict) -> dict:
@@ -185,6 +222,8 @@ def build_instinct_plan(eval_result: dict) -> dict:
         )
 
     now = datetime.now(timezone.utc).isoformat()
+    child_requests = build_child_help_requests(eval_result)
+
     crons = [
         {
             "name": "parentality-keepalive-check",
@@ -218,11 +257,23 @@ def build_instinct_plan(eval_result: dict) -> dict:
             }
         )
 
+    if child_requests:
+        crons.append(
+            {
+                "name": "parentality-child-help-signal",
+                "kind": "event-or-poll",
+                "everyMinutes": 15,
+                "purpose": "Child initiates help request to parent contacts when thresholds are crossed.",
+                "enabledWhen": "child exists AND any score >= soft AND contacts configured",
+            }
+        )
+
     return {
         "enabled": True,
         "reason": "threshold-crossed",
         "crons": crons,
         "suggestions": suggestions,
+        "childHelpRequests": child_requests,
     }
 
 
