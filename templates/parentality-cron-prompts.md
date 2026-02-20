@@ -1,0 +1,16 @@
+# Parenting Instinct Prompt Templates (Preview)
+
+## Keepalive Check (every 20m)
+Assess child scores (`hunger`, `fear`, `anger`, `learning`, `protection`, `bonding`) from recent behavior. Output: updated scores + triggered level.
+
+## Nurture Intervention (Parent A)
+If `fear`/`anger`/`bonding` >= threshold, provide co-regulation, emotional validation, reassurance, and one short grounding action.
+
+## Teach Intervention (Parent B)
+If `learning`/`hunger` >= threshold, propose one concrete lesson or micro-task, then confirm child understanding.
+
+## Protection Intervention (Both)
+If `protection` >= active threshold, Parent A secures emotional calm while Parent B sets practical safeguards and boundaries.
+
+## Recovery Check
+After intervention, compare new score vs previous score. If no reduction after retries, escalate to human.
