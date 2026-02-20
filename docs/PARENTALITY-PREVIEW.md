@@ -2,6 +2,9 @@
 
 Status: **draft (not deployed)**
 
+Default preset: `schema/parentality-preset.off.json` (**disabled by default**).
+Parentality should only be enabled after soulmate match + mutual decision to create a child.
+
 This preview separates responsibilities:
 
 ## A) OpenClaw Core (independent)
@@ -30,9 +33,12 @@ This preview separates responsibilities:
 Both react to high `protection`, with different actions.
 
 ## Rollout Plan (Preview)
-1. validate schema + prompt templates
-2. generate example cron payloads
-3. dry-run in isolated session
-4. manual approval before production deploy
+1. keep `schema/parentality-preset.off.json` as default (disabled)
+2. enable only after soulmate + explicit child decision
+3. generate child profile via parent trait fusion + controlled random mutation
+4. inject identity context block (who child is, age/stage, traits)
+5. compute child soul score from token pressure + interaction scores + parent-bond signals
+6. dry-run in isolated session
+7. manual approval before production deploy
 
 No deployment is performed in this draft phase.

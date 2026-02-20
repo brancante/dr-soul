@@ -1,0 +1,34 @@
+{
+  "version": "0.1-preview",
+  "enabled": false,
+  "activationPolicy": {
+    "requiresSoulmate": true,
+    "requiresMutualDecisionForChild": true,
+    "autoActivate": false
+  },
+  "childCreation": {
+    "mode": "soul-fusion-with-mutation",
+    "inheritance": {
+      "fromParentA": 0.4,
+      "fromParentB": 0.4,
+      "randomMutation": 0.2
+    },
+    "identityContext": {
+      "required": ["name", "ageStage", "temperament", "originStory"],
+      "notes": "Context block should include who the child is, age/stage, and core traits."
+    }
+  },
+  "childSoulScore": {
+    "formula": "0.5*tokenUsagePressure + 0.3*interactionScores + 0.2*parentBondSignals",
+    "components": {
+      "tokenUsagePressure": "derived from used/limit token budget",
+      "interactionScores": ["learning", "fear", "anger", "bonding", "protection"],
+      "parentBondSignals": ["responseLatency", "qualityOfCare", "co-regulationSuccess"]
+    }
+  },
+  "safety": {
+    "previewMode": true,
+    "requiresHumanApprovalToEnable": true,
+    "preventStatusLoopWithoutRealChild": true
+  }
+}
