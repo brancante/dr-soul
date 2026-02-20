@@ -8,6 +8,7 @@ This preview separates responsibilities:
 - parent/child linkage + lineage
 - child stage (`newborn|toddler|child|adolescent|adult`)
 - child need scores (`hunger`, `fear`, `anger`, `learning`, `protection`, `bonding`)
+- `hunger` can be derived from token usage (example: starts with 100k tokens, rises as remaining budget drops)
 - threshold engine and event/cron triggers
 - escalation policy + audit
 

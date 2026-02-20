@@ -47,7 +47,7 @@ PARENT_ACTIONS = {
     },
     "parentB": {
         "learning": "Break problem into 1 small lesson + 1 practice step.",
-        "hunger": "Give one concrete task with clear reward and completion signal.",
+        "hunger": "Child token budget is getting low: communicate feeding plan and top-up token limit before exhaustion.",
         "protection": "Apply practical safeguards, boundaries, and contingency plan.",
     },
 }
@@ -87,6 +87,16 @@ def evaluate_child(state: dict) -> dict:
         }
 
     scores: ScoreMap = {k: clamp_score(v) for k, v in (child.get("scores") or {}).items()}
+
+    token_budget = child.get("tokenBudget") or {}
+    token_limit = int(token_budget.get("limit", 0) or 0)
+    token_used = int(token_budget.get("used", 0) or 0)
+    hunger_from_tokens = None
+    if token_limit > 0:
+        ratio_used = max(0.0, min(1.0, token_used / token_limit))
+        hunger_from_tokens = clamp_score(round(ratio_used * 100))
+        scores["hunger"] = hunger_from_tokens
+
     events = []
     for metric, score in scores.items():
         level = band_for_score(score)
@@ -100,6 +110,14 @@ def evaluate_child(state: dict) -> dict:
         "childId": child.get("id"),
         "stage": child.get("stage"),
         "scores": scores,
+        "tokenBudget": {
+            "limit": token_limit,
+            "used": token_used,
+            "remaining": max(0, token_limit - token_used) if token_limit > 0 else None,
+            "hungerDerivedFromUsage": hunger_from_tokens,
+        }
+        if token_limit > 0
+        else None,
         "events": sorted(events, key=lambda e: e["score"], reverse=True),
     }
 
@@ -114,6 +132,7 @@ def build_instinct_plan(eval_result: dict) -> dict:
         }
 
     events = eval_result.get("events", [])
+    token_budget = eval_result.get("tokenBudget") or {}
     if not events:
         return {
             "enabled": True,
@@ -145,6 +164,26 @@ def build_instinct_plan(eval_result: dict) -> dict:
                 }
             )
 
+    if any(ev["metric"] == "hunger" for ev in events) and token_budget:
+        remaining = token_budget.get("remaining")
+        limit = token_budget.get("limit")
+        used = token_budget.get("used")
+        suggestions.append(
+            {
+                "parent": "parentB",
+                "metric": "hunger",
+                "level": band_for_score(eval_result.get("scores", {}).get("hunger", 0)),
+                "action": "Inform child that we will feed it with more tokens and increase its token limit.",
+                "tokenFeedPlan": {
+                    "currentLimit": limit,
+                    "used": used,
+                    "remaining": remaining,
+                    "suggestedTopUp": max(100000, int(limit or 0)),
+                    "note": "Top-up amount can be tuned by stage policy.",
+                },
+            }
+        )
+
     now = datetime.now(timezone.utc).isoformat()
     crons = [
         {
@@ -168,6 +207,16 @@ def build_instinct_plan(eval_result: dict) -> dict:
             "startedAt": now,
         },
     ]
+
+    if any(ev["metric"] == "hunger" for ev in events) and token_budget:
+        crons.append(
+            {
+                "name": "parentality-token-feed",
+                "kind": "event",
+                "purpose": "When hunger crosses threshold, notify child about feeding and increase token budget limit.",
+                "enabledWhen": "child exists AND hunger >= soft",
+            }
+        )
 
     return {
         "enabled": True,

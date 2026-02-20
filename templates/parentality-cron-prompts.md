@@ -7,7 +7,8 @@ Assess child scores (`hunger`, `fear`, `anger`, `learning`, `protection`, `bondi
 If `fear`/`anger`/`bonding` >= threshold, provide co-regulation, emotional validation, reassurance, and one short grounding action.
 
 ## Teach Intervention (Parent B)
-If `learning`/`hunger` >= threshold, propose one concrete lesson or micro-task, then confirm child understanding.
+If `learning` >= threshold, propose one concrete lesson or micro-task, then confirm child understanding.
+If `hunger` (token budget pressure) >= threshold, announce feeding, top-up token limit, and confirm new budget to child.
 
 ## Protection Intervention (Both)
 If `protection` >= active threshold, Parent A secures emotional calm while Parent B sets practical safeguards and boundaries.

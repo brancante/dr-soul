@@ -3,6 +3,10 @@
   "child": {
     "id": "child-agent-id",
     "stage": "toddler",
+    "tokenBudget": {
+      "limit": 100000,
+      "used": 92000
+    },
     "scores": {
       "hunger": 72,
       "fear": 78,
